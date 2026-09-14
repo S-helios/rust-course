@@ -4,6 +4,58 @@ var initAll = function () {
         return;
     }
 
+    // The classic mdBook template renders SUMMARY links from the book root.
+    // Rebase them on nested pages, then keep canonical course.rs / BeatAI links
+    // inside this classic build when the destination is part of SUMMARY.md.
+    var bookRoot = new URL(path_to_root || "./", window.location.href);
+    var localBookRoutes = {};
+    Array.prototype.forEach.call(document.querySelectorAll("#sidebar a[href]"), function (link) {
+        var rawHref = link.getAttribute("href");
+        if (!rawHref || /^(?:[a-z]+:|#)/i.test(rawHref)) {
+            return;
+        }
+
+        var localUrl = new URL(rawHref, bookRoot);
+        link.href = localUrl.href;
+        localBookRoutes[localUrl.pathname] = true;
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll("main a[href]"), function (link) {
+        var canonicalUrl;
+        try {
+            canonicalUrl = new URL(link.href);
+        } catch (error) {
+            return;
+        }
+
+        var targetPath;
+        if (canonicalUrl.hostname === "beatai.org" &&
+            (canonicalUrl.pathname === "/rust-course" || canonicalUrl.pathname.indexOf("/rust-course/") === 0)) {
+            targetPath = canonicalUrl.pathname.replace(/^\/rust-course\/?/, "");
+        } else if (canonicalUrl.hostname === "course.rs") {
+            targetPath = canonicalUrl.pathname.replace(/^\/+/, "");
+        } else {
+            return;
+        }
+
+        targetPath = targetPath.replace(/\/$/, "");
+        if (!targetPath) {
+            targetPath = "index";
+        }
+        if (!targetPath.endsWith(".html")) {
+            targetPath += ".html";
+        }
+
+        var localUrl = new URL(targetPath, bookRoot);
+        if (!localBookRoutes[localUrl.pathname]) {
+            return;
+        }
+
+        localUrl.search = canonicalUrl.search;
+        localUrl.hash = canonicalUrl.hash;
+        link.href = localUrl.href;
+    });
+
     var images = document.querySelectorAll("main img")
     Array.prototype.forEach.call(images, function (img) {
         img.addEventListener("click", function () {
@@ -15,7 +67,7 @@ var initAll = function () {
 
     // Un-active everything when you click it
     Array.prototype.forEach.call(document.getElementsByClassName("pagetoc")[0].children, function (el) {
-        el.addEventHandler("click", function () {
+        el.addEventListener("click", function () {
             Array.prototype.forEach.call(document.getElementsByClassName("pagetoc")[0].children, function (el) {
                 el.classList.remove("active");
             });

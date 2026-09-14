@@ -32,7 +32,9 @@ jobs:
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: "latest"
+          # Keep the classic mdBook 0.4 reading experience. mdBook 0.5 changed
+          # its templates and generated assets substantially.
+          mdbook-version: "0.4.52"
       - run: mdbook build
       - name: Copy Assets
         run: |

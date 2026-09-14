@@ -1,0 +1,15 @@
+{
+  "name": "rust-course-classic",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rust Course current content with the classic mdBook reading experience",
+  "packageManager": "pnpm@11.24.0",
+  "scripts": {
+    "dev": "./scripts/mdbook.sh serve --hostname 127.0.0.1 --port 3000 --open",
+    "start": "./scripts/mdbook.sh serve --hostname 127.0.0.1 --port 3000",
+    "build": "./scripts/mdbook.sh build",
+    "test": "./scripts/mdbook.sh test",
+    "clean": "./scripts/mdbook.sh clean",
+    "mdbook": "./scripts/mdbook.sh"
+  }
+}

@@ -2,3 +2,7 @@
 book
 Changelog.md
 dump.rdb
+.playwright-cli/
+.tools/
+output/
+node_modules/
