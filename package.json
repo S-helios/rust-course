@@ -5,8 +5,8 @@
   "description": "Rust Course current content with the classic mdBook reading experience",
   "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "dev": "./scripts/mdbook.sh serve --hostname 127.0.0.1 --port 3000 --open",
-    "start": "./scripts/mdbook.sh serve --hostname 127.0.0.1 --port 3000",
+    "dev": "./scripts/mdbook.sh serve --hostname 127.0.0.1 --port 43127 --open",
+    "start": "./scripts/mdbook.sh serve --hostname 127.0.0.1 --port 43127",
     "build": "./scripts/mdbook.sh build",
     "test": "./scripts/mdbook.sh test",
     "clean": "./scripts/mdbook.sh clean",
