@@ -10,6 +10,11 @@
     "build": "./scripts/mdbook.sh build",
     "test": "./scripts/mdbook.sh test",
     "clean": "./scripts/mdbook.sh clean",
-    "mdbook": "./scripts/mdbook.sh"
+    "mdbook": "./scripts/mdbook.sh",
+    "deploy": "wrangler deploy",
+    "deploy:preview": "wrangler versions upload"
+  },
+  "devDependencies": {
+    "wrangler": "^4.132.0"
   }
 }
