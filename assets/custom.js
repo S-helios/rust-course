@@ -20,6 +20,52 @@ var initAll = function () {
         localBookRoutes[localUrl.pathname] = true;
     });
 
+    // mdBook rebuilds the sidebar on every chapter navigation. Keep the
+    // user's expanded sections so moving between chapters does not reset the
+    // reading context. The key is the chapter URL, so it remains stable even
+    // when the generated sidebar numbering changes.
+    var expandedSidebarKey = "rust-course-expanded-sidebar";
+    var sidebarToggles = document.querySelectorAll("#sidebar a.toggle");
+
+    var chapterKey = function (toggle) {
+        var chapterLink = toggle.parentElement && toggle.parentElement.querySelector("a[href]:not(.toggle)");
+        if (!chapterLink) return null;
+        return new URL(chapterLink.href, window.location.href).pathname;
+    };
+
+    var readExpandedSidebar = function () {
+        try {
+            var saved = JSON.parse(localStorage.getItem(expandedSidebarKey) || "[]");
+            return Array.isArray(saved) ? saved : [];
+        } catch (error) {
+            return [];
+        }
+    };
+
+    var writeExpandedSidebar = function () {
+        var expanded = [];
+        Array.prototype.forEach.call(sidebarToggles, function (toggle) {
+            var key = chapterKey(toggle);
+            if (key && toggle.parentElement.classList.contains("expanded")) {
+                expanded.push(key);
+            }
+        });
+        try {
+            localStorage.setItem(expandedSidebarKey, JSON.stringify(expanded));
+        } catch (error) { }
+    };
+
+    var savedExpandedSidebar = readExpandedSidebar();
+    Array.prototype.forEach.call(sidebarToggles, function (toggle) {
+        if (savedExpandedSidebar.indexOf(chapterKey(toggle)) !== -1) {
+            toggle.parentElement.classList.add("expanded");
+        }
+        toggle.addEventListener("click", function () {
+            // mdBook's own listener toggles the class first; save afterward.
+            window.setTimeout(writeExpandedSidebar, 0);
+        });
+    });
+
     Array.prototype.forEach.call(document.querySelectorAll("main a[href]"), function (link) {
         var canonicalUrl;
         try {
